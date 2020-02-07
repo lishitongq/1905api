@@ -164,4 +164,21 @@ Class TestController extends Controller
         echo $response_data;
 
     }
+
+    public function sign4()
+    {
+        $data = "Hello World";
+
+//        计算签名
+          $path = storage_path('keys/privkey3');    //密钥路径
+          $pkeyid = openssl_pkey_get_private("file://".$path);
+//          计算签名 得到$signature
+         openssl_sign($data,$signature, $pkeyid);
+         openssl_free_key($pkeyid);
+
+//         var_dump($signature);
+//           base64编码 方便传输
+            $sign_str = base64_encode($signature);
+            echo "base64encode 后的签名: " . $sign_str;
+    }
 }

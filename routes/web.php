@@ -38,4 +38,5 @@ Route::get('/test/postman1','Api\TestController@postman1')->middleware('filter',
 Route::get('/test/md5','Api\TestController@md5test');
 
 Route::get('/test/sign3','Api\TestController@sign3');
+Route::get('/test/sign4','Api\TestController@sign4');   // 私钥
 
