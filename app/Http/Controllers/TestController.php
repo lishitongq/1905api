@@ -81,4 +81,122 @@ class TestController extends Controller
         //echo $url;die;
         header("Location:".$url);
     }
+
+    public function ascii()
+    {
+        $char = 'hello word';
+        $length = strlen($char);
+        echo $length;
+        $pass = '';
+        for ($i=0;$i<$length;$i++)
+        {
+            echo $char[$i] . '>>>' . ord($char[$i]);echo '</br>';
+            $ord = ord($char[$i]) + 3;
+            $chr = chr($ord);
+            echo $char[$i] . '>>>' . $ord . '>>>' . $chr;echo '</br>';
+            $pass .= $chr;
+        }
+        echo '</br>';
+        echo $pass;
+    }
+
+    public function dec()
+    {
+        $enc = 'khoor#zrug';
+        echo '密文:'.$enc;echo '<hr>';
+        $length = strlen($enc);
+
+        $str = '';
+        for ($i=0;$i<$length;$i++)
+        {
+            $ord = ord($enc[$i]) - 3;
+            $chr = chr($ord);
+            echo $ord . '>>>' . $chr ;echo '</br>';
+            $str .= $chr;
+        }
+        echo '解密:' . $str;
+    }
+
+    public function md1()
+    {
+        echo base64_decode("VGhpcyBpcyBhbiBlbmNvZGVkIHN0cmluZw==");die;
+        echo md5($_GET['p']);die;
+        echo md5('123456abc');die;
+        $str1 = 'Hello World';
+        echo $str1;echo "</br>";
+        echo md5($str1);echo "<hr>";
+
+        $str2 = 'Hello World Hello World asdfghjmnbvcfxd';
+        echo $str1;echo '</br>';
+        echo md5($str2);
+    }
+	
+	public function sign1()
+	{
+		echo "<pre>";print_r($_GET);echo "</pre>";
+		
+		$sign = $_GET['sign'];  // base64的签名
+		unset($_GET['sign']);
+		// 将参数字典序排序
+        ksort($_GET);
+        echo '<pre>';print_r($_GET);echo '</pre>';echo '<hr>';
+		
+		 // 拼接字符串
+        $str = '';
+        foreach ($_GET as $k=>$v)
+        {
+            $str .= $k . '=' . $v . '&';
+        }
+        $str = rtrim($str,'&');
+        echo $str;echo '<hr>';
+		
+		 // 使用 公钥进行验签
+        $pub_key = file_get_contents(storage_path('keys/pubkey2'));
+        $status = openssl_verify($str,base64_decode($sign),$pub_key,OPENSSL_ALGO_SHA256);
+		var_dump($status);
+		
+		if($status)	// 验签通过
+		{
+			echo "success";
+		}else{
+			echo "验签失败";
+		}
+	}
+	
+	public function sign2()
+	{
+		$sign_token = 'asdsaf';
+		
+		// 接收参数
+		echo '<pre>';print_r($_GET);echo '</pre>';
+		
+		// 保存参数
+		$sign1 = $_GET['sign'];
+		echo "发送端的签名：" . $sign1;echo '</br>';
+		unset($_GET['sign']);
+		
+		ksort($_GET);
+		
+		echo '<pre>';print_r($_GET);echo '</pre>';
+		//拼接待签名字符串
+		 $str = '';
+        foreach ($_GET as $k=>$v)
+        {
+            $str .= $k . '=' . $v . '&';
+        }
+        $str = rtrim($str,'&');
+        echo '待签名字符串：' . $str;echo '<hr>';
+		
+		// 计算签名
+		$sign2 = sha1($str . $sign_token);
+		echo '</br>';
+		echo "接收端计算的签名：" . $sign2;
+		
+		echo '</br>';
+		if ($sign1 === $sign2){
+			echo "验签成功";
+		}else{
+			echo "验签失败";
+		}
+	}
 }
