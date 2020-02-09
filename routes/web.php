@@ -40,3 +40,4 @@ Route::get('/test/md5','Api\TestController@md5test');
 Route::get('/test/sign3','Api\TestController@sign3');
 Route::get('/test/sign4','Api\TestController@sign4');   // 私钥
 
+Route::get('/rsa','Api\TestController@rsa');

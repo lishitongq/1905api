@@ -181,4 +181,24 @@ Class TestController extends Controller
             $sign_str = base64_encode($signature);
             echo "base64encode 后的签名: " . $sign_str;
     }
+	
+	public function rsa()
+    {
+        $priv_key = file_get_contents(storage_path('keys/priv'));
+
+        $data = "helloworld";
+        echo "待加密数据：" . $data;echo '</br>';
+
+        openssl_private_encrypt($data,$enc_data,$priv_key);
+//        var_dump($enc_data);
+
+        echo '<hr>';
+        // 将密文 发送至 对方
+        $base64_encode_str = base64_encode($enc_data);
+        echo '<pre>';print_r($base64_encode_str);echo '</pre>';echo '<hr>';
+        $url = 'http://passport.1905.com/rsadescypt?data='.urlencode($base64_encode_str);
+        echo $url;
+        $response = file_get_contents($url);    //发送请求
+        echo $response;
+    }
 }
